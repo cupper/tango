@@ -1,0 +1,25 @@
+{% extends 'rango/base.html' %}
+
+{% block content %}
+        <h1>Top 5 most popular categories</h1>
+        {% if categories %}
+            <ul>
+                {% for c in categories %}
+                <li><a href="{% url 'category' c.url %}">{{ c.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no categories present.</strong><br/>
+        {% endif %}
+
+        <h1>Top 5 most viewed pages</h1>
+        {% if pages %}
+            <ul>
+                {% for p in pages %}
+                <li><a href="{{ p.url }}">{{ p.title }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no pages present.</strong><br/>
+        {% endif %}
+{% endblock%}

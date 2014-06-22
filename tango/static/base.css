@@ -1,0 +1,40 @@
+div {
+    position: absolute;
+}
+#header, #footer {
+    left: 0;
+    right: 0;
+    text-align:center;
+    background-color:yellow; 
+}
+#header {
+    top: 0;
+    height:40px;
+    text-align:right 
+}
+#footer {
+    bottom: 0;
+    height:20px;
+}
+#l_sidebar, #main, #r_sidebar {
+    top: 40px;
+    bottom: 20px;
+}
+#l_sidebar {
+    left: 0;
+    width: 100px;
+    background-color:#ccc;
+    text-align:center;
+}
+#main {
+    left: 100px;
+    right: 100px;
+    background-color:green; 
+}
+#r_sidebar {
+    right: 0;
+    width: 100px;
+    background-color:#ccc;
+    text-align:center;
+}
+

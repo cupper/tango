@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'base.css' %}" />
+
+<html>
+    <head>
+        <title>Rango - {% block title %}How to Tango with Django!{% endblock %}</title>
+    </head>
+
+    <body>
+            <div id="header">
+                {% if user.is_authenticated %}
+                    Hello, <strong>{{ user }}</strong><br/>
+                    <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    Hello, Guest<br/>
+                    <a href="{% url 'register' %}">Register</a>
+                    <a href="{% url 'login' %}">Login</a>
+                {% endif %}
+            </div>
+            
+            <div id="l_sidebar">
+                <a href="{% url 'index' %}">Home</a><br/><br/>
+                <a href="{% url 'add_category' %}">Add a New Category</a>
+            </div>
+            <div id="main">
+                {% block content %}{% endblock %}
+            </div>
+            <div id="r_sidebar"></div>
+
+            <div id="footer">
+                <a href="{% url 'about' %}">About</a>
+            </div>
+    </body>
+</html>
+
