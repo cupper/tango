@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 from rango.models import *
 from rango.forms import *
 
@@ -14,21 +15,55 @@ def url_to_name(url):
         return None
     return url.replace('_', ' ')
 
+# Decorator for count visits
+def visit_counter(f):
 
+    def wrapper(*args, **kw):
+        request = args[0]
+        if request.session.get('last_visit'):
+            last_visit = request.session.get('last_visit')
+            visits = request.session.get('visits', 0)
+
+            last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+            if (datetime.now() - last_visit_time).seconds > 5:
+                request.session['visits'] = visits+1
+                request.session['last_visit'] = str(datetime.now())
+        else:
+            request.session['visits'] = 0
+            request.session['last_visit'] = str(datetime.now())
+
+        return f(*args, **kw)
+
+    return wrapper
+
+@visit_counter
 def index(request):
     categories = Category.objects.order_by('-likes')[:5]
     for c in categories:
         c.url = name_to_url(c.name)
-
     pages = Page.objects.order_by('-views')[:5]
-    return render(request, 'rango/index.html', {'categories': categories,
-     'pages': pages})
 
+    #if request.session.get('last_visit'):
+    #    last_visit = request.session.get('last_visit')
+    #    visits = request.session.get('visits', 0)
 
+    #    last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+    #    if (datetime.now() - last_visit_time).seconds > 5:
+    #        request.session['visits'] = visits+1
+    #        request.session['last_visit'] = str(datetime.now())
+    #else:
+    #    request.session['visits'] = 0
+    #    request.session['last_visit'] = str(datetime.now())
+
+    return render(request, 'rango/index.html',
+        {'categories': categories, 'pages': pages})
+
+@visit_counter
 def about(request):
-    return render(request, 'rango/about.html')
+    visits = request.session.get('visits', 0)
+    return render(request, 'rango/about.html', {'visits': visits})
 
-
+@visit_counter
 def category(request, category_name_url):
     category_name = url_to_name(category_name_url)
     pages = None
@@ -46,6 +81,7 @@ def category(request, category_name_url):
 
 
 @login_required
+@visit_counter
 def add_category(request, category_name_url = None):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
@@ -59,6 +95,7 @@ def add_category(request, category_name_url = None):
 
 
 @login_required
+@visit_counter
 def add_page(request, category_name_url):
     category_name = url_to_name(category_name_url)
     form = None
@@ -83,6 +120,7 @@ def add_page(request, category_name_url):
      'form': form})
 
 
+@visit_counter
 def register(request):
     registered = False
     if request.method == 'POST':
@@ -108,6 +146,7 @@ def register(request):
      'registered': registered})
 
 
+@visit_counter
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
