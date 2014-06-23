@@ -3,7 +3,7 @@
 {% block content %}
         <h1>Login to Rango</h1>
 
-        <form id="login_form" method="post" action="{% url 'login' %}">
+        <form action="{% url 'login' %}" method="post" >
             {% csrf_token %}
             Username: <input type="text" name="username" value="" size="50" />
             <br />
@@ -11,5 +11,6 @@
             <br />
 
             <input type="submit" value="submit" />
+            <input type="hidden" name="next" value="{{ next }}" />
         </form>
 {% endblock %}

@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.utils.http import is_safe_url
 from datetime import datetime
 from rango.models import *
 from rango.forms import *
@@ -148,6 +149,10 @@ def register(request):
 
 @visit_counter
 def user_login(request):
+    redirect_to = request.REQUEST.get('next', 'index')
+    if not is_safe_url(url=redirect_to, host=request.get_host()):
+        redirect_to = ('index')
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -155,14 +160,14 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect('index')
+                return redirect(redirect_to)
             else:
                 return HttpReponse('Your Rango account is disabled')
         else:
             print 'Invalid login details: {0}, {1}'.format(username, password)
             return HttpResponse('Invalid login details supplied')
     else:
-        return render(request, 'rango/login.html', {})
+        return render(request, 'rango/login.html', {'next': redirect_to})
 
 
 @login_required
