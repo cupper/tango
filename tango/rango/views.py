@@ -6,6 +6,7 @@ from django.utils.http import is_safe_url
 from datetime import datetime
 from rango.models import *
 from rango.forms import *
+from rango.bing_search import run_query
 
 def name_to_url(name):
     return name.replace(' ', '_')
@@ -176,3 +177,13 @@ def user_logout(request):
     logout(request)
     return redirect('index')
 
+@visit_counter
+def search(request):
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+        if query:
+            result_list = run_query(query)
+
+    return render(request, 'rango/search.html', {'result_list': result_list})

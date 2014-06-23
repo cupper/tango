@@ -40,6 +40,7 @@
                           {% if user.is_authenticated %}
                           <li><a href="{% url 'add_category' %}">Add Category</a></li>
                           {% endif %}
+                          <li><a href="{% url 'search' %}">Search</a></li>
                           <li><a href="{% url 'about' %}">About</a></li>
                       </ul>
                   </div>
