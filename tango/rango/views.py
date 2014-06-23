@@ -38,24 +38,24 @@ def visit_counter(f):
 
     return wrapper
 
-@visit_counter
-def index(request):
+def get_category_list():
     categories = Category.objects.order_by('-likes')[:5]
     for c in categories:
         c.url = name_to_url(c.name)
+    return categories
+
+def search(query_str):
+    result_list = []
+    query = query_str.strip()
+    if query:
+        result_list = run_query(query)
+    return result_list
+
+
+@visit_counter
+def index(request):
+    categories = get_category_list()
     pages = Page.objects.order_by('-views')[:5]
-
-    #if request.session.get('last_visit'):
-    #    last_visit = request.session.get('last_visit')
-    #    visits = request.session.get('visits', 0)
-
-    #    last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
-    #    if (datetime.now() - last_visit_time).seconds > 5:
-    #        request.session['visits'] = visits+1
-    #        request.session['last_visit'] = str(datetime.now())
-    #else:
-    #    request.session['visits'] = 0
-    #    request.session['last_visit'] = str(datetime.now())
 
     return render(request, 'rango/index.html',
         {'categories': categories, 'pages': pages})
@@ -67,6 +67,7 @@ def about(request):
 
 @visit_counter
 def category(request, category_name_url):
+    categories = get_category_list()
     category_name = url_to_name(category_name_url)
     pages = None
     category = None
@@ -76,10 +77,16 @@ def category(request, category_name_url):
     except Category.DoesNotExist:
         pass
 
+    result_list = []
+    if request.method == 'POST':
+        result_list = search(request.POST['query'])
+
     return render(request, 'rango/category.html', {'category_name_url': category_name_url,
      'category_name': category_name,
      'category': category,
-     'pages': pages})
+     'pages': pages,
+     'categories': categories,
+     'result_list': result_list })
 
 
 @login_required
@@ -177,13 +184,20 @@ def user_logout(request):
     logout(request)
     return redirect('index')
 
-@visit_counter
-def search(request):
-    result_list = []
 
-    if request.method == 'POST':
-        query = request.POST['query'].strip()
-        if query:
-            result_list = run_query(query)
+@login_required
+def profile(request):
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request, 'rango/profile.html', {'profile': profile})
 
-    return render(request, 'rango/search.html', {'result_list': result_list})
+@login_required
+def track_url(request):
+    redirect_to = 'index'
+    if (request.method == 'GET') and ('page_id' in request.GET):
+        page = Page.objects.get(id=request.GET['page_id'])
+        if page:
+            redirect_to = page.url
+            page.views += 1
+            page.save()
+            
+    return redirect(redirect_to)

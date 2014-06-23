@@ -13,20 +13,53 @@
             {% if pages %}
             <ul>
                 {% for page in pages %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>
                 {% endfor %}
             </ul>
             {% else %}
                 <p>No pages currently in category.</p>
             {% endif %}
+            {% if user.is_authenticated %}
             <button class="btn btn-primary" 
                 onclick="window.location.href='{% url 'add_page' category_name_url %}'">Add Page</button>
+            {% endif %}
         {% else %}
             <p>The specified category '{{ category_name }}' does not exist.</p>
+            {% if user.is_authenticated %}
             <button class="btn btn-primary" 
                 onclick="window.location.href='{% url 'add_category' category_name_url %}'">Create It?</button>
+            {% endif    %}
         {% endif %}
         </div>
     </div>
+</div>
+
+<!-- Search part -->
+<div class="container-fluid">
+    <form class="form-signin span8" id="user_form" method="post" action="{% url 'category' category_name_url %}">
+        {% csrf_token %}
+        <!-- Display the search form elements here -->
+        <div class="form-horizontal">
+            <input type="text" size="100" name="query" value="" id="query" />
+            <input class="btn btn-primary" type="submit" name="submit" value="Search" />
+        </div>
+        <br />
+    </form>
+
+    {% if result_list %}
+    <!-- Display search results in an ordered list -->
+    <div style="clear: both;">
+        <ol>
+            {% for result in result_list %}
+            <li>
+                <strong><a href="{{ result.link }}">{{ result.title }}</a>
+                </strong>
+                <br />
+                <em>{{ result.summary }}</em>
+            </li>
+            {% endfor %}
+        </ol>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

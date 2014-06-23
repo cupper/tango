@@ -1,0 +1,13 @@
+<!-- 
+Args:
+    categories: list of 5 most popular (likes) categories
+-->
+
+{% if categories %}
+<ul>
+    {% for category in categories %}
+    <li><a href="{% url 'category' category.url %}">{{ category.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
