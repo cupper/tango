@@ -1,25 +1,40 @@
 {% extends 'rango/base.html' %}
 
 {% block content %}
-        <h1>Top 5 most popular categories</h1>
+<div class="hero-unit">
+    <h1>Ready to Rango</h1>
+    <p>Find, Add, Share and Rango useful links and resources.</p>
+</div>
+
+<div class="row-fluid">
+    <div class="span6">
+        <h2>Top Five Categories</h2>
         {% if categories %}
-            <ul>
-                {% for c in categories %}
-                <li><a href="{% url 'category' c.url %}">{{ c.name }}</a></li>
-                {% endfor %}
-            </ul>
+        <ul>
+            {% for category in categories %}
+            <li><a href="{% url 'category' category.url %}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
         {% else %}
-            <strong>There are no categories present.</strong><br/>
+        <strong>No categories at present.</strong>
         {% endif %}
 
-        <h1>Top 5 most viewed pages</h1>
+    </div>
+    <!--/span-->
+    <div class="span6">
+        <h2>Top Five Pages</h2>
         {% if pages %}
-            <ul>
-                {% for p in pages %}
-                <li><a href="{{ p.url }}">{{ p.title }}</a></li>
-                {% endfor %}
-            </ul>
+        <ul>
+            {% for page in pages %}
+            <li><a href="{{ page.url }}">{{ page.title }}</a> - {{ page.category }} ({{ page.views }} view(s))</li>
+            {% endfor %}
+        </ul>
         {% else %}
-            <strong>There are no pages present.</strong><br/>
+        <strong>No pages at present.</strong>
         {% endif %}
+
+    </div>
+    <!--/span-->
+</div>
+<!--/row-->
 {% endblock%}
