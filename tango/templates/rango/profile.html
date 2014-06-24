@@ -14,7 +14,7 @@ Args:
     <p>email: {{ user.email }}</p>
     <p>website: {{ profile.website }}</p>
     {% if profile.picture %}
-    <p><img src="{{ profile.picture.url }}" alt="user_logo"></p>
+    <p><img src="{{ profile.picture.url_125x125 }}" alt="user_logo"></p>
     {% endif %}
 </div>
 {% endblock %}

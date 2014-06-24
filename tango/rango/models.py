@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django_thumbs.db.models import ImageWithThumbsField
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
 
     website = models.URLField(blank=True)
-    picture = models.ImageField(upload_to='profile_images', blank=True)
+    picture = ImageWithThumbsField(upload_to='profile_images', blank=True, sizes=((125,125),))
 
     def __unicode__(self):
         return self.user.username

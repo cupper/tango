@@ -199,5 +199,5 @@ def track_url(request):
             redirect_to = page.url
             page.views += 1
             page.save()
-            
+
     return redirect(redirect_to)
