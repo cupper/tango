@@ -38,11 +38,19 @@ def visit_counter(f):
 
     return wrapper
 
-def get_category_list():
-    categories = Category.objects.order_by('-likes')[:5]
-    for c in categories:
+def get_category_list(max_resuls, starts_with=''):
+    cat_list = []
+    if starts_with:
+        cat_list = Category.objects.filter(name__startswith=starts_with)[:max_resuls]
+    else:
+        cat_list = Category.objects.filter()[:max_resuls]
+    for c in cat_list:
         c.url = name_to_url(c.name)
-    return categories
+
+    return cat_list
+
+def top_5_category_list():
+    return get_category_list(5)
 
 def search(query_str):
     result_list = []
@@ -54,7 +62,7 @@ def search(query_str):
 
 @visit_counter
 def index(request):
-    categories = get_category_list()
+    categories = top_5_category_list()
     pages = Page.objects.order_by('-views')[:5]
 
     return render(request, 'rango/index.html',
@@ -63,7 +71,7 @@ def index(request):
 @visit_counter
 def about(request):
     visits = request.session.get('visits', 0)
-    return render(request, 'rango/about.html', {'visits': visits, 'categories': get_category_list()})
+    return render(request, 'rango/about.html', {'visits': visits, 'categories': top_5_category_list()})
 
 @visit_counter
 def category(request, category_name_url):
@@ -84,7 +92,7 @@ def category(request, category_name_url):
      'category_name': category_name,
      'category': category,
      'pages': pages,
-     'categories': get_category_list(),
+     'categories': top_5_category_list(),
      'result_list': result_list })
 
 
@@ -99,7 +107,7 @@ def add_category(request, category_name_url = None):
         print form.errors
     else:
         form = CategoryForm(initial={'name': url_to_name(category_name_url)})
-    return render(request, 'rango/add_category.html', {'form': form, 'categories': get_category_list()})
+    return render(request, 'rango/add_category.html', {'form': form, 'categories': top_5_category_list()})
 
 
 @login_required
@@ -115,7 +123,7 @@ def add_page(request, category_name_url):
                 cat = Category.objects.get(name=category_name)
                 page.category = cat
             except Category.DoesNotExist:
-                return render(request, 'rango/add_category.html', {'categories': get_category_list()})
+                return render(request, 'rango/add_category.html', {'categories': top_5_category_list()})
 
             page.views = 0
             page.save()
@@ -126,7 +134,7 @@ def add_page(request, category_name_url):
     return render(request, 'rango/add_page.html', {'category_name_url': category_name_url,
      'category_name': category_name,
      'form': form,
-     'categories': get_category_list()})
+     'categories': top_5_category_list()})
 
 
 @visit_counter
@@ -154,7 +162,7 @@ def register(request):
     return render(request, 'rango/register.html', {'user_form': user_form,
      'profile_form': profile_form,
      'registered': registered,
-     'categories': get_category_list()})
+     'categories': top_5_category_list()})
 
 
 @visit_counter
@@ -172,12 +180,12 @@ def user_login(request):
                 login(request, user)
                 return redirect(redirect_to)
             else:
-                return render(request, 'rango/login.html', {'disabled_account': 1, 'categories': get_category_list()})
+                return render(request, 'rango/login.html', {'disabled_account': 1, 'categories': top_5_category_list()})
         else:
-            return render(request, 'rango/login.html', {'bad_details': 1, 'categories': get_category_list()})
+            return render(request, 'rango/login.html', {'bad_details': 1, 'categories': top_5_category_list()})
     
     # if GET
-    return render(request, 'rango/login.html', {'next': redirect_to, 'categories': get_category_list()})
+    return render(request, 'rango/login.html', {'next': redirect_to, 'categories': top_5_category_list()})
 
 
 @login_required
@@ -189,7 +197,7 @@ def user_logout(request):
 @login_required
 def profile(request):
     profile = UserProfile.objects.get(user=request.user)
-    return render(request, 'rango/profile.html', {'profile': profile, 'categories': get_category_list()})
+    return render(request, 'rango/profile.html', {'profile': profile, 'categories': top_5_category_list()})
 
 @login_required
 def track_url(request):
@@ -202,3 +210,27 @@ def track_url(request):
             page.save()
 
     return redirect(redirect_to)
+
+@login_required
+def like_category(request):
+    cat_id = None
+    if request.method == 'GET':
+        cat_id = request.GET['category_id']
+
+    likes = 0
+    if cat_id:
+        category = Category.objects.get(pk=cat_id)
+        if category:
+            likes = category.likes + 1
+            category.likes = likes
+            category.save()
+
+    return HttpResponse(likes)
+
+def suggest_category(request):
+    query = None
+    if request.method == 'GET':
+        query = request.GET['query']
+    cat_list = get_category_list(max_resuls=8, starts_with=query)
+    
+    return render(request, 'rango/category_list.html', {'categories': cat_list})

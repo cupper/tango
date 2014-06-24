@@ -12,5 +12,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', user_logout, name='logout'),
     url(r'^profile/$', profile, name='profile'),
     url(r'^goto/$', track_url, name='goto'),
+    url(r'^like_category/$', like_category, name='like_category'),
+    url(r'^suggest_category/$', suggest_category, name='suggest_category'),
 )
 

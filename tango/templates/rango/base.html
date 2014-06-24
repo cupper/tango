@@ -54,8 +54,9 @@
                   <div class="well sidebar-nav">
                       {% block sidebar %}
                       {% endblock %}
+                      <input  class="input-medium search-query" type="text" name="suggestion" value="" id="suggestion" />
                       <div id="cats">
-                        {% include "rango/category_list.html" %}
+                        {% include "rango/category_list.html" with categories=categories %}
                       </div>
                   </div>
                   <!--/.well -->
@@ -79,8 +80,10 @@
           </div>
       </footer>
 
-      <script src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
+      <!--<script src="{% static 'js/jquery-2.0.3.min.js' %}"></script>-->
       <script src="{% static 'js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'js/jquery.js' %}"></script>
+      <script src="{% static 'js/rango-ajax.js' %}"></script>
   </body>
 </html>
 
