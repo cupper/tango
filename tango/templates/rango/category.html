@@ -36,7 +36,7 @@
 
 <!-- Search part -->
 <div class="container-fluid">
-    <form class="form-signin span8" id="user_form" method="post" action="{% url 'category' category_name_url %}">
+    <form class="form-signin span8" id="search_form" method="post" action="{% url 'category' category_name_url %}">
         {% csrf_token %}
         <!-- Display the search form elements here -->
         <div class="form-horizontal">
@@ -45,21 +45,25 @@
         </div>
         <br />
     </form>
-
-    {% if result_list %}
-    <!-- Display search results in an ordered list -->
-    <div style="clear: both;">
-        <ol>
-            {% for result in result_list %}
-            <li>
-                <strong><a href="{{ result.link }}">{{ result.title }}</a>
-                </strong>
-                <br />
-                <em>{{ result.summary }}</em>
-            </li>
-            {% endfor %}
-        </ol>
-    </div>
-    {% endif %}
 </div>
+
+<!-- Display search results in an ordered list -->
+<div style="container-fluid">
+{% if result_list %}
+    <ol>
+        {% for result in result_list %}
+        <li>
+            <strong><a href="{{ result.link }}">{{ result.title }}</a>
+            </strong>
+            <br />
+            <em>{{ result.summary }}</em>
+        </li>
+        {% endfor %}
+    </ol>
+{% else %}
+    <br/>
+    <p>No results found</p>
+{% endif %}
+</div>
+
 {% endblock %}

@@ -63,11 +63,10 @@ def index(request):
 @visit_counter
 def about(request):
     visits = request.session.get('visits', 0)
-    return render(request, 'rango/about.html', {'visits': visits})
+    return render(request, 'rango/about.html', {'visits': visits, 'categories': get_category_list()})
 
 @visit_counter
 def category(request, category_name_url):
-    categories = get_category_list()
     category_name = url_to_name(category_name_url)
     pages = None
     category = None
@@ -85,7 +84,7 @@ def category(request, category_name_url):
      'category_name': category_name,
      'category': category,
      'pages': pages,
-     'categories': categories,
+     'categories': get_category_list(),
      'result_list': result_list })
 
 
@@ -100,7 +99,7 @@ def add_category(request, category_name_url = None):
         print form.errors
     else:
         form = CategoryForm(initial={'name': url_to_name(category_name_url)})
-    return render(request, 'rango/add_category.html', {'form': form})
+    return render(request, 'rango/add_category.html', {'form': form, 'categories': get_category_list()})
 
 
 @login_required
@@ -116,7 +115,7 @@ def add_page(request, category_name_url):
                 cat = Category.objects.get(name=category_name)
                 page.category = cat
             except Category.DoesNotExist:
-                return render(request, 'rango/add_category.html')
+                return render(request, 'rango/add_category.html', {'categories': get_category_list()})
 
             page.views = 0
             page.save()
@@ -126,7 +125,8 @@ def add_page(request, category_name_url):
         form = PageForm()
     return render(request, 'rango/add_page.html', {'category_name_url': category_name_url,
      'category_name': category_name,
-     'form': form})
+     'form': form,
+     'categories': get_category_list()})
 
 
 @visit_counter
@@ -153,7 +153,8 @@ def register(request):
 
     return render(request, 'rango/register.html', {'user_form': user_form,
      'profile_form': profile_form,
-     'registered': registered})
+     'registered': registered,
+     'categories': get_category_list()})
 
 
 @visit_counter
@@ -171,12 +172,12 @@ def user_login(request):
                 login(request, user)
                 return redirect(redirect_to)
             else:
-                return render(request, 'rango/login.html', {'disabled_account': 1})
+                return render(request, 'rango/login.html', {'disabled_account': 1, 'categories': get_category_list()})
         else:
-            return render(request, 'rango/login.html', {'bad_details': 1})
+            return render(request, 'rango/login.html', {'bad_details': 1, 'categories': get_category_list()})
     
     # if GET
-    return render(request, 'rango/login.html', {'next': redirect_to})
+    return render(request, 'rango/login.html', {'next': redirect_to, 'categories': get_category_list()})
 
 
 @login_required
@@ -188,7 +189,7 @@ def user_logout(request):
 @login_required
 def profile(request):
     profile = UserProfile.objects.get(user=request.user)
-    return render(request, 'rango/profile.html', {'profile': profile})
+    return render(request, 'rango/profile.html', {'profile': profile, 'categories': get_category_list()})
 
 @login_required
 def track_url(request):

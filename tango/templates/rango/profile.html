@@ -1,20 +1,26 @@
 {% extends 'rango/base.html' %}
 {% load static %}
+
 <!-- 
 Args:
 	user:
 	profile: additional information about user (e.g. website, picture)
 -->
 
+{% block title %}Profile{% endblock %}
+
 {% block content %}
 <div class="hero-unit">
     <h1>{{ user.username }}	</h1>
-    <br/>
+    <p>Email: {{ user.email }}</p>
 
-    <p>email: {{ user.email }}</p>
-    <p>website: {{ profile.website }}</p>
-    {% if profile.picture %}
-    <p><img src="{{ profile.picture.url_125x125 }}" alt="user_logo"></p>
+    {% if profile %}
+    	{% if profile.website %}
+    		<p>Website: <a href="{{ profile.website }}">{{ profile.website }}</a></p>
+    	{% endif %}
+    	{% if profile.picture %}
+    		<img src="{{ profile.picture.url_125x125 }}" alt="user_logo">
+    	{% endif %}
     {% endif %}
 </div>
 {% endblock %}

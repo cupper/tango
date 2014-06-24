@@ -52,7 +52,11 @@
           <div class="row-fluid">
               <div class="span3">
                   <div class="well sidebar-nav">
-                      {% include "rango/category_list.html" %}
+                      {% block sidebar %}
+                      {% endblock %}
+                      <div id="cats">
+                        {% include "rango/category_list.html" %}
+                      </div>
                   </div>
                   <!--/.well -->
               </div>

@@ -4,7 +4,7 @@ Args:
 -->
 
 {% if categories %}
-<ul>
+<ul class="nav nav-list">
     {% for category in categories %}
     <li><a href="{% url 'category' category.url %}">{{ category.name }}</a>
     </li>
