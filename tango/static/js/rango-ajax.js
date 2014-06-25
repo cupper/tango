@@ -17,4 +17,18 @@ $(document).ready(function() {
         });
     });
 
+	$("#search_results").on("click", "button.btn", function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+    	var catid, title, url;
+    	catid = $(this).attr("data-catid");
+    	title = $(this).attr("data-title");
+    	url = $(this).attr("data-url");
+    	$.get('/rango/auto_add_page/', 
+    		{catid: catid, title: title, url: url},
+    		function(data){
+    			$('#pages').html(data);
+    		});
+    });
+
 });

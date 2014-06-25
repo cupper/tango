@@ -14,5 +14,6 @@ urlpatterns = patterns('',
     url(r'^goto/$', track_url, name='goto'),
     url(r'^like_category/$', like_category, name='like_category'),
     url(r'^suggest_category/$', suggest_category, name='suggest_category'),
+    url(r'^auto_add_page/$', auto_add_page, name='auto_add_page'),
 )
 

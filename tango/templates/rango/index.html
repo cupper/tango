@@ -9,29 +9,25 @@
 <div class="row-fluid">
     <div class="span6">
         <h2>Top Five Categories</h2>
-        {% if categories %}
-        <ul>
-            {% for category in categories %}
-            <li><a href="{% url 'category' category.url %}">{{ category.name }}</a></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <strong>No categories at present.</strong>
-        {% endif %}
+        <div id="cats">
+            {% if categories %}
+                {% include "rango/category_list.html" with categories=categories %}
+            {% else %}
+                <strong>No categories at present.</strong>
+            {% endif %}
+        </div>
 
     </div>
     <!--/span-->
     <div class="span6">
         <h2>Top Five Pages</h2>
-        {% if pages %}
-        <ul>
-            {% for page in pages %}
-            <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a> - {{ page.category }} ({{ page.views }} view(s))</li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <strong>No pages at present.</strong>
-        {% endif %}
+        <div id="pages">
+            {% if pages %}
+                {% include "rango/page_list.html" with pages=pages ex_descr=1 %}
+            {% else %}
+                <strong>No pages at present.</strong>
+            {% endif %}
+        </div>
 
     </div>
     <!--/span-->

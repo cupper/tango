@@ -8,7 +8,6 @@
     <br/>
 
     <div class="row-fluid">
-        <div class="span6">
         {% if category %}
             <p>
                 <b id="like_count">{{ category.likes }}</b> people like this category
@@ -16,27 +15,28 @@
                 <button id ="likes" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Like</button>
                 {% endif %}
             </p>
+
+            <div id="pages">
             {% if pages %}
-            <ul>
-                {% for page in pages %}
-                <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>
-                {% endfor %}
-            </ul>
+                {% include "rango/page_list.html" with pages=pages %}
             {% else %}
-                <p>No pages currently in category.</p>
+                <strong>No pages at present.</strong>
             {% endif %}
+            </div>
+
             {% if user.is_authenticated %}
             <button class="btn btn-primary" 
                 onclick="window.location.href='{% url 'add_page' category_name_url %}'">Add Page</button>
             {% endif %}
+
         {% else %}
             <p>The specified category '{{ category_name }}' does not exist.</p>
             {% if user.is_authenticated %}
             <button class="btn btn-primary" 
                 onclick="window.location.href='{% url 'add_category' category_name_url %}'">Create It?</button>
             {% endif    %}
+        
         {% endif %}
-        </div>
     </div>
 </div>
 
@@ -54,13 +54,16 @@
 </div>
 
 <!-- Display search results in an ordered list -->
-<div style="container-fluid">
+<div style="container-fluid" id="search_results">
 {% if result_list %}
     <ol>
         {% for result in result_list %}
         <li>
-            <strong><a href="{{ result.link }}">{{ result.title }}</a>
-            </strong>
+            {% if user.is_authenticated %}
+            <button class="btn btn-mini btn-primary" type="button"
+                data-catid="{{category.id}}" data-title="{{ result.title }}" data-url="{{ result.link }}">Add</button>
+            {% endif %}
+            <strong><a href="{{ result.link }}">{{ result.title }}</a></strong>
             <br />
             <em>{{ result.summary }}</em>
         </li>

@@ -1,13 +1,14 @@
 <!-- 
 Args:
-    categories: list of 5 most popular (likes) categories
+    categories: list of categories
 -->
 
 {% if categories %}
+
 <ul class="nav nav-list">
     {% for category in categories %}
-    <li><a href="{% url 'category' category.url %}">{{ category.name }}</a>
-    </li>
+    	<li><a href="{% url 'category' category.url %}">{{ category.name }}</a></li>
     {% endfor %}
 </ul>
+
 {% endif %}

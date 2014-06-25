@@ -80,7 +80,7 @@ def category(request, category_name_url):
     category = None
     try:
         category = Category.objects.get(name=category_name)
-        pages = Page.objects.filter(category=category)
+        pages = Page.objects.filter(category=category).order_by('-views')
     except Category.DoesNotExist:
         pass
 
@@ -234,3 +234,22 @@ def suggest_category(request):
     cat_list = get_category_list(max_resuls=8, starts_with=query)
     
     return render(request, 'rango/category_list.html', {'categories': cat_list})
+
+@login_required
+def auto_add_page(request):
+    pages = None
+    if request.method == 'GET':
+        try:
+            category = Category.objects.get(pk=request.GET['catid'])
+        except Category.DoesNotExist:
+            return HttpResponse()
+
+        title = request.GET['title']
+        url = request.GET['url']
+        if not title or not url:
+            return HttpResponse()
+
+        page = Page.objects.get_or_create(title=title, url=url, category=category)
+        pages = Page.objects.filter(category=category).order_by('-views')
+
+    return render(request, 'rango/page_list.html', {'pages': pages})

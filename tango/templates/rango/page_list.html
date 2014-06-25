@@ -1,0 +1,18 @@
+<!-- 
+Args:
+    pages: list of pages
+-->
+
+{% if pages %}
+
+<ul>
+    {% for page in pages %}
+    <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a>
+		{% if ex_descr %}
+     	- {{ page.category }} ({{ page.views }} view(s))
+    	{% endif %}
+	</li>
+    {% endfor %}
+</ul>
+
+{% endif%}
